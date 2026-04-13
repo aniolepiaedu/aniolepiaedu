@@ -1,9 +1,9 @@
 let currentCountry = null;
 
 // 🔗 MICROSERVICES
-const FAVORITES_URL = "/favorites";
-const HISTORY_URL = "/history";
-const WISHLIST_URL = "/wishlist";
+const FAVORITES_URL = "/api/favorites";
+const HISTORY_URL = "/api/history";
+const WISHLIST_URL = "/api/wishlist";
 
 // =======================
 // SEARCH COUNTRY
