@@ -18,5 +18,5 @@ export default function handler(req, res) {
         return res.status(200).json({ ok: true });
     }
 
-    res.status(405).end();
+    return res.status(405).end();
 }
