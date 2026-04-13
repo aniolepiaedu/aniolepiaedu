@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Travel Finder</title>
+    <meta charset="UTF-8">
+    <title>TravelTech Microservices</title>
 </head>
-
 <body>
 
-<h1>Cercador de Països</h1>
+<h1>Buscador de países</h1>
 
-<input type="text" id="countryInput" placeholder="Introdueix un país">
-<button onclick="searchCountry()">Cercar</button>
+<input id="countryInput" placeholder="Escribe un país">
+<button onclick="searchCountry()">Buscar</button>
 
 <div id="result"></div>
 
-<h2>Destinacions favorites</h2>
-
+<h2>Favoritos</h2>
 <ul id="favorites"></ul>
+
+<h2>Historial</h2>
+<ul id="history"></ul>
+
+<h2>Wishlist</h2>
+<ul id="wishlist"></ul>
 
 <script src="script.js"></script>
 
