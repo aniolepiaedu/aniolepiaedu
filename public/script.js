@@ -1,9 +1,9 @@
 let currentCountry = null;
 
 // 🔗 MICROSERVICES
-const FAVORITES_URL = "https://escolapia-mataro.clickedu.net/favorites";
-const HISTORY_URL = "https://escolapia-mataro.clickedu.net/history";
-const WISHLIST_URL = "https://escolapia-mataro.clickedu.net/wishlist";
+const FAVORITES_URL = "/favorites";
+const HISTORY_URL = "/history";
+const WISHLIST_URL = "/wishlist";
 
 // =======================
 // SEARCH COUNTRY
