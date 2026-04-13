@@ -1,37 +1,22 @@
-const express = require("express");
-const cors = require("cors");
-
-const app = express();
-const PORT = 3001;
-
-app.use(cors());
-app.use(express.json());
-
 let favorites = [];
 let id = 1;
 
-// GET
-app.get("/favorites", (req, res) => {
-    res.json(favorites);
-});
+export default function handler(req, res) {
+    if (req.method === "GET") {
+        return res.json(favorites);
+    }
 
-// POST
-app.post("/favorites", (req, res) => {
-    const newFavorite = {
-        id: id++,
-        ...req.body
-    };
-    favorites.push(newFavorite);
-    res.json(newFavorite);
-});
+    if (req.method === "POST") {
+        const item = { id: id++, ...req.body };
+        favorites.push(item);
+        return res.json(item);
+    }
 
-// DELETE
-app.delete("/favorites/:id", (req, res) => {
-    const favId = parseInt(req.params.id);
-    favorites = favorites.filter(f => f.id !== favId);
-    res.json({ message: "Deleted" });
-});
+    if (req.method === "DELETE") {
+        const favId = Number(req.query.id);
+        favorites = favorites.filter(f => f.id !== favId);
+        return res.json({ ok: true });
+    }
 
-app.listen(PORT, () => {
-    console.log("Favorites service on " + PORT);
-});
+    res.status(405).end();
+}
