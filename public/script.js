@@ -1,7 +1,11 @@
-let currentCountry = null; // Guardem el país actual
+let currentCountry = null;
+
 const resultDiv = document.getElementById("result");
 
-// Crear loader si no existeix
+const FAVORITES_URL = "https://favorites-service.onrender.com";
+const HISTORY_URL = "https://history-service.onrender.com";
+
+// Loader
 let loader = document.getElementById("loader");
 if (!loader) {
     loader = document.createElement("div");
@@ -13,25 +17,23 @@ if (!loader) {
     document.body.insertBefore(loader, resultDiv);
 }
 
-// Funció auxiliar per esperar n segons
 function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Cerca país amb loader de 10 segons
+// SEARCH COUNTRY
 async function searchCountry() {
     const country = document.getElementById("countryInput").value.trim();
     if (!country) return;
 
     resultDiv.innerHTML = "";
-    loader.style.display = "block"; // MOSTRAR loader
+    loader.style.display = "block";
 
     try {
         const response = await fetch(`https://restcountries.com/v3.1/name/${country}`);
         const data = await response.json();
 
-        // Esperar 10 segons abans de mostrar resultat/error
-        await wait(10000);
+        await wait(2000); // (10s es demasiado, 2s mejor)
 
         if (!data || data.status === 404) {
             throw new Error("País no trobat ❌");
@@ -39,6 +41,13 @@ async function searchCountry() {
 
         const countryData = data[0];
         currentCountry = countryData;
+
+        // 👉 GUARDAR EN HISTORY
+        await fetch(`${HISTORY_URL}/history`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ country: country })
+        });
 
         const languages = Object.values(countryData.languages || {}).join(", ");
         const currencies = Object.values(countryData.currencies || {}).map(c => c.name).join(", ");
@@ -55,28 +64,32 @@ async function searchCountry() {
             <br><br>
             <button onclick="addFavorite()">Afegir a favorits</button>
         `;
+
     } catch (error) {
         currentCountry = null;
         resultDiv.innerHTML = error.message;
     } finally {
-        loader.style.display = "none"; // AMAGAR loader sempre
+        loader.style.display = "none";
     }
 }
-// Afegir a favorits
+
+// ADD FAVORITE
 async function addFavorite() {
     if (!currentCountry) return;
 
-    const response = await fetch("http://localhost:3000/favorites");
+    const response = await fetch(`${FAVORITES_URL}/favorites`);
     const favorites = await response.json();
 
-    const exists = favorites.some(f => f.name.toLowerCase() === currentCountry.name.common.toLowerCase());
+    const exists = favorites.some(f =>
+        f.name.toLowerCase() === currentCountry.name.common.toLowerCase()
+    );
 
     if (exists) {
-        alert(`${currentCountry.name.common} ja està afegit als favorits!`);
+        alert(`${currentCountry.name.common} ja està als favorits!`);
         return;
     }
 
-    await fetch("http://localhost:3000/favorites", {
+    await fetch(`${FAVORITES_URL}/favorites`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -91,10 +104,11 @@ async function addFavorite() {
     loadFavorites();
 }
 
-// Carregar favorits
+// LOAD FAVORITES
 async function loadFavorites() {
-    const response = await fetch("http://localhost:3000/favorites");
+    const response = await fetch(`${FAVORITES_URL}/favorites`);
     const data = await response.json();
+
     const list = document.getElementById("favorites");
     list.innerHTML = "";
 
@@ -102,18 +116,17 @@ async function loadFavorites() {
         const li = document.createElement("li");
         li.innerHTML = `
             <strong>${f.name}</strong> - ${f.capital} (${f.region}) 
-            <img src="${f.flag}" width="50" style="vertical-align:middle; margin-left:5px;">
+            <img src="${f.flag}" width="50">
             <button onclick="deleteFavorite(${f.id})">Eliminar</button>
         `;
         list.appendChild(li);
     });
 }
 
-// Eliminar favorit
+// DELETE
 async function deleteFavorite(id) {
-    await fetch(`http://localhost:3000/favorites/${id}`, { method: "DELETE" });
+    await fetch(`${FAVORITES_URL}/favorites/${id}`, { method: "DELETE" });
     loadFavorites();
 }
 
-// Carregar inicialment
 loadFavorites();
