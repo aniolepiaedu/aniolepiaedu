@@ -13,15 +13,6 @@ app.use(express.json());
 app.use(express.static("public"));
 
 
-function run(file) {
-    const p = spawn("node", [file], { stdio: "inherit" });
-    return p;
-}
-run("api/favorites-service/index.js");
-run("api/history-service/index.js");
-run("api/wishlist-service/index.js");
-run("server.js"); // frontend
-
 app.listen(PORT, () => {
     console.log(`Frontend running on ${PORT}`);
 });
