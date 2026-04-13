@@ -1,6 +1,6 @@
 let currentCountry = null;
 
-// 🔗 MICROSERVICES
+// APIs (VERCEL)
 const FAVORITES_URL = "/api/favorites";
 const HISTORY_URL = "/api/history";
 const WISHLIST_URL = "/api/wishlist";
@@ -29,7 +29,6 @@ async function searchCountry() {
         <button onclick="addWishlist()">Añadir wishlist</button>
     `;
 
-    // HISTORY
     await fetch(HISTORY_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,12 +63,15 @@ async function loadFavorites() {
     list.innerHTML = "";
 
     data.forEach(f => {
-        list.innerHTML += `
-            <li>
-                ${f.name}
-                <button onclick="deleteFavorite(${f.id})">X</button>
-            </li>
-        `;
+        const li = document.createElement("li");
+        li.textContent = f.name;
+
+        const btn = document.createElement("button");
+        btn.textContent = "X";
+        btn.onclick = () => deleteFavorite(f.id);
+
+        li.appendChild(btn);
+        list.appendChild(li);
     });
 }
 
@@ -92,7 +94,9 @@ async function loadHistory() {
     list.innerHTML = "";
 
     data.forEach(h => {
-        list.innerHTML += `<li>${h.country} - ${h.date}</li>`;
+        const li = document.createElement("li");
+        li.textContent = `${h.country} - ${h.date}`;
+        list.appendChild(li);
     });
 }
 
@@ -119,12 +123,15 @@ async function loadWishlist() {
     list.innerHTML = "";
 
     data.forEach(w => {
-        list.innerHTML += `
-            <li>
-                ${w.name}
-                <button onclick="deleteWishlist(${w.id})">X</button>
-            </li>
-        `;
+        const li = document.createElement("li");
+        li.textContent = w.name;
+
+        const btn = document.createElement("button");
+        btn.textContent = "X";
+        btn.onclick = () => deleteWishlist(w.id);
+
+        li.appendChild(btn);
+        list.appendChild(li);
     });
 }
 
@@ -137,6 +144,8 @@ async function deleteWishlist(id) {
 }
 
 // INIT
-loadFavorites();
-loadHistory();
-loadWishlist();
+window.addEventListener("DOMContentLoaded", () => {
+    loadFavorites();
+    loadHistory();
+    loadWishlist();
+});
