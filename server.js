@@ -1,18 +1,28 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path");
-const { spawn } = require("child_process");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// 👉 FRONTEND
-app.use(express.static("public"));
+const PORT = 3000;
 
+// importar rutas
+const favoritesRoutes = require("./api/favorites");
+const historyRoutes = require("./api/history");
+const wishlistRoutes = require("./api/wishlist");
+
+// usar rutas
+app.use("/api/favorites", favoritesRoutes);
+app.use("/api/history", historyRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+
+// ruta base
+app.get("/", (req, res) => {
+    res.send("API is running 🚀");
+});
 
 app.listen(PORT, () => {
-    console.log(`Frontend running on ${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
